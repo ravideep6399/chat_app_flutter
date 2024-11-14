@@ -1,14 +1,25 @@
+import 'package:chat_app/components/custom_card.dart';
+import 'package:chat_app/models/chat_model.dart';
 import 'package:chat_app/screens/components/chat_component.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final List<ChatModel> chatmodels;
+  final ChatModel sourceChat;
+  const HomeScreen({super.key, required this.chatmodels, required this.sourceChat});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<ChatModel> chatmodels = [];
+  @override
+  void initState() {
+    chatmodels = widget.chatmodels;
+    super.initState();
+  }
+
   Widget midBlockUI(
       double windowWidth, double windowHeight, BuildContext context) {
     return Container(
@@ -40,26 +51,13 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: SizedBox(
               child: ListView.builder(
-                  itemCount: 30,
+                  itemCount: chatmodels.length,
                   itemBuilder: (context, index) {
                     return Card(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)),
-                      child: ListTile(
-                        leading: const CircleAvatar(
-                            backgroundColor: Colors.white10,
-                            child: Icon(
-                              Icons.person,
-                              color: Colors.white,
-                            )),
-                        title: const Text("Name"),
-                        minTileHeight: 70,
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("clicked")));
-                        },
-                      ),
-                    );
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)),
+                        child: CustomCard(
+                            chatModel: chatmodels[index], sourchat: widget.sourceChat));
                   }),
             ),
           )
@@ -88,10 +86,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: windowHeight,
                 width: windowWidth,
                 decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(5)
-                ),
+                    color: Theme.of(context).primaryColor,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(5)),
                 child: Row(
                   children: [
                     Container(
@@ -115,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     midBlockUI(windowWidth, windowHeight, context),
-                    Expanded(child: ChatComponent()),
+                    Expanded(child: ChatComponent(source: widget.sourceChat)),
                   ],
                 ),
               )
